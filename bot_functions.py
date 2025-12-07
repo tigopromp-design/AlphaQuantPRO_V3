@@ -27,3 +27,16 @@ def pump_dump_detector():
         return {"pumps": pumps[:10], "dumps": dumps[:10]}  # أعلى 10 لكل
     except Exception as e:
         return {"error": str(e)}
+def smart_money_flow(top_n=15):
+    """
+    يراقب السيولة الكبيرة في أعلى العملات نشاطًا
+    top_n: عدد العملات الأعلى نشاطًا
+    """
+    try:
+        url = "https://api.binance.com/api/v3/ticker/24hr"
+        data = requests.get(url).json()
+        # ترتيب العملات حسب حجم التداول الإجمالي (Quote Volume)
+        sorted_data = sorted(data, key=lambda x: float(x['quoteVolume']), reverse=True)
+        return sorted_data[:top_n]
+    except Exception as e:
+        return {"error": str(e)}
