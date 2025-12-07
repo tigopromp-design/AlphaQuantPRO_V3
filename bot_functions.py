@@ -40,3 +40,25 @@ def smart_money_flow(top_n=15):
         return sorted_data[:top_n]
     except Exception as e:
         return {"error": str(e)}
+def entry_exit_zones(vol_threshold=10000, change_threshold=2):
+    """
+    يعطي إشارات دخول وخروج للعملات
+    vol_threshold: حجم التداول الأدنى
+    change_threshold: التغير النسبي في السعر
+    """
+    try:
+        url = "https://api.binance.com/api/v3/ticker/24hr"
+        data = requests.get(url).json()
+        signals = []
+        for d in data:
+            vol = float(d["volume"])
+            change = abs(float(d["priceChangePercent"]))
+            if vol > vol_threshold and change < change_threshold:
+                signals.append({
+                    "symbol": d["symbol"],
+                    "entry": d["lowPrice"],
+                    "exit": d["highPrice"]
+                })
+        return signals[:10]  # أعلى 10 إشارات
+    except Exception as e:
+        return {"error": str(e)}
